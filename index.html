@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forca da Sustentabilidade 🌱</title>
+  <style>
+    :root {
+      --bg-top: #e8f5e9;
+      --bg-bottom: #c8e6c9;
+      --card-bg: #ffffff;
+      --primary: #2e7d32;
+      --primary-dark: #1b5e20;
+      --primary-light: #81c784;
+      --accent: #f9a825;
+      --danger: #d32f2f;
+      --text-main: #1f2937;
+      --text-muted: #4b5563;
+      --border: #d1fae5;
+      --shadow: 0 12px 30px rgba(27, 94, 32, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(160deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 760px;
+      background: var(--card-bg);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      border: 2px solid var(--border);
+      overflow: hidden;
+      padding: 24px;
+      position: relative;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 16px;
+      border-bottom: 2px dashed #e5e7eb;
+      margin-bottom: 20px;
+    }
+
+    .title-area h1 {
+      font-size: 1.5rem;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .title-area p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .stats {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .stat-badge {
+      background: #f1f8e9;
+      border: 1px solid #c5e1a5;
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .game-stage {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 20px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 640px) {
+      .game-stage {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .container {
+        padding: 18px 14px;
+      }
+      .title-area h1 {
+        font-size: 1.25rem;
+      }
+    }
+
+    .tree-box {
+      background: linear-gradient(180deg, #e0f7fa 0%, #f1f8e9 80%, #dcedc8 100%);
+      border-radius: 20px;
+      padding: 16px;
+      border: 2px solid #c8e6c9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .leaves-counter {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      background: rgba(255, 255, 255, 0.85);
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    svg#tree-svg {
+      width: 160px;
+      height: 170px;
+      overflow: visible;
+    }
+
+    .leaf {
+      transition: transform 0.6s ease, opacity 0.6s ease;
+      transform-origin: center;
+    }
+
+    .leaf.fallen {
+      opacity: 0;
+      transform: translateY(65px) rotate(45deg) scale(0.4);
+    }
+
+    .tree-saved {
+      animation: pulseTree 0.8s ease;
+    }
+
+    @keyframes pulseTree {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+
+    .word-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .category-pill {
+      background: #e8f5e9;
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 5px 14px;
+      border-radius: 999px;
+      border: 1px solid #a5d6a7;
+    }
+
+    .word-slots {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      min-height: 54px;
+    }
+
+    .word-group {
+      display: flex;
+      gap: 6px;
+      margin: 0 6px;
+    }
+
+    .letter-slot {
+      width: 36px;
+      height: 44px;
+      border-bottom: 3px solid var(--primary);
+      background: #f9fafb;
+      border-radius: 8px 8px 2px 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      transition: all 0.25s ease;
+    }
+
+    .letter-slot.revealed {
+      background: #e8f5e9;
+      transform: translateY(-2px);
+    }
+
+    .letter-slot.missed {
+      color: var(--danger);
+      border-bottom-color: var(--danger);
+      background: #ffebee;
+    }
+
+    @media (max-width: 480px) {
+      .letter-slot {
+        width: 28px;
+        height: 38px;
+        font-size: 1.15rem;
+      }
+    }
+
+    .keyboard {
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      gap: 7px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 520px) {
+      .keyboard {
+        grid-template-columns: repeat(7, 1fr);
+        gap: 6px;
+      }
+    }
+
+    .key-btn {
+      background: #f3f4f6;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 11px 0;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    .key-btn:hover:not(:disabled) {
+      background: #e8f5e9;
+      border-color: var(--primary-light);
+      transform: translateY(-2px);
+    }
+
+    .key-btn:active:not(:disabled) {
+      transform: scale(0.95);
+    }
+
+    .key-btn.correct {
+      background: var(--primary);
+      border-color: var(--primary-dark);
+      color: #ffffff;
+    }
+
+    .key-btn.wrong {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      color: #b91c1c;
+      opacity: 0.65;
+    }
+
+    .key-btn:disabled {
+      cursor: not-allowed;
+    }
+
+    /* Card Educativo */
+    .edu-card {
+      margin-top: 22px;
+      padding: 18px 20px;
+      border-radius: 16px;
+      display: none;
+      animation: slideUp 0.35s ease;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .edu-card.win {
+      display: block;
+      background: #e8f5e9;
+      border: 2px solid #66bb6a;
+    }
+
+    .edu-card.lose {
+      display: block;
+      background: #fff3e0;
+      border: 2px solid #ffb74d;
+    }
+
+    .edu-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .edu-card.win .edu-header { color: var(--primary-dark); }
+    .edu-card.lose .edu-header { color: #e65100; }
+
+    .edu-text {
+      font-size: 0.96rem;
+      line-height: 1.5;
+      color: var(--text-main);
+      margin-bottom: 14px;
+    }
+
+    .btn-next {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s ease, transform 0.15s ease;
+    }
+
+    .btn-next:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    /* Tela Final */
+    .end-screen {
+      display: none;
+      text-align: center;
+      padding: 16px 8px;
+      animation: slideUp 0.4s ease;
+    }
+
+    .end-screen.active {
+      display: block;
+    }
+
+    .end-icon {
+      font-size: 3.5rem;
+      margin-bottom: 10px;
+    }
+
+    .end-screen h2 {
+      font-size: 1.7rem;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+    }
+
+    .end-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    @media (max-width: 500px) {
+      .end-metrics {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .metric-box {
+      background: #f1f8e9;
+      border: 2px solid #c5e1a5;
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .metric-value {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+
+    .metric-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .final-message {
+      background: #e8f5e9;
+      border-left: 5px solid var(--primary);
+      padding: 16px;
+      border-radius: 12px;
+      text-align: left;
+      font-size: 0.96rem;
+      line-height: 1.55;
+      color: var(--text-main);
+      margin-bottom: 22px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="title-area">
+        <h1>🌱 Forca da Sustentabilidade</h1>
+        <p>Descubra as palavras e preserve a árvore!</p>
+      </div>
+      <div class="stats">
+        <div class="stat-badge">🔄 Rodada: <span id="round-display">1/10</span></div>
+        <div class="stat-badge">🌳 Árvores: <span id="trees-display">0</span></div>
+        <div class="stat-badge">⭐ Pontos: <span id="score-display">0</span></div>
+      </div>
+    </header>
+
+    <main id="game-area">
+      <div class="game-stage">
+        <div class="tree-box" id="tree-box">
+          <svg id="tree-svg" viewBox="0 0 200 200" aria-label="Árvore com folhas representando suas chances">
+            <!-- Solo -->
+            <ellipse cx="100" cy="184" rx="70" ry="12" fill="#81c784" />
+            <!-- Tronco e galhos -->
+            <path d="M90 182 Q93 135 88 105 L65 82 L71 76 L91 96 L94 65 L104 65 L107 96 L128 75 L134 81 L110 105 Q107 135 110 182 Z" fill="#6d4c41" />
+            <!-- Copa base (galhos internos) -->
+            <circle cx="100" cy="76" r="34" fill="#a5d6a7" opacity="0.35" />
+            <!-- 6 Folhas interativas -->
+            <g id="leaf-1" class="leaf">
+              <path d="M62 82 C42 74, 42 54, 64 56 C74 57, 74 74, 62 82 Z" fill="#2e7d32" />
+            </g>
+            <g id="leaf-2" class="leaf">
+              <path d="M74 54 C60 34, 78 20, 92 36 C98 44, 88 56, 74 54 Z" fill="#43a047" />
+            </g>
+            <g id="leaf-3" class="leaf">
+              <path d="M102 44 C100 20, 124 20, 122 44 C121 54, 104 54, 102 44 Z" fill="#2e7d32" />
+            </g>
+            <g id="leaf-4" class="leaf">
+              <path d="M126 56 C138 36, 158 48, 142 66 C134 74, 122 66, 126 56 Z" fill="#43a047" />
+            </g>
+            <g id="leaf-5" class="leaf">
+              <path d="M136 86 C158 78, 162 100, 140 104 C130 105, 126 90, 136 86 Z" fill="#388e3c" />
+            </g>
+            <g id="leaf-6" class="leaf">
+              <path d="M64 102 C42 104, 42 82, 64 84 C74 85, 74 101, 64 102 Z" fill="#388e3c" />
+            </g>
+          </svg>
+          <div class="leaves-counter">🍃 Folhas restantes: <span id="leaves-count">6</span>/6</div>
+        </div>
+
+        <div class="word-area">
+          <div class="category-pill" id="category-display">Tema Ambiental</div>
+          <div class="word-slots" id="word-slots"></div>
+        </div>
+      </div>
+
+      <div class="keyboard" id="keyboard"></div>
+
+      <div class="edu-card" id="edu-card">
+        <div class="edu-header" id="edu-header"></div>
+        <p class="edu-text" id="edu-text"></p>
+        <button class="btn-next" id="next-btn">Próxima Palavra ➡️</button>
+      </div>
+    </main>
+
+    <section class="end-screen" id="end-screen">
+      <div class="end-icon">🌍🏆</div>
+      <h2>Fim da Jornada Ambiental!</h2>
+      <p style="color: var(--text-muted);">Confira o resultado da sua missão pela natureza:</p>
+
+      <div class="end-metrics">
+        <div class="metric-box">
+          <div class="metric-value" id="final-score">0</div>
+          <div class="metric-label">Pontuação Final</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-value" id="final-trees">0/10</div>
+          <div class="metric-label">Árvores Preservadas</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-value" id="final-words">0/10</div>
+          <div class="metric-label">Palavras Descobertas</div>
+        </div>
+      </div>
+
+      <div class="final-message">
+        <strong>Por que isso importa?</strong><br />
+        Cada pequena atitude — economizar água, separar resíduos, evitar desperdícios e proteger áreas verdes — ajuda a manter o equilíbrio do planeta para as próximas gerações. A sustentabilidade começa nas escolhas do nosso dia a dia!
+      </div>
+
+      <button class="btn-next" id="restart-btn">🔄 Jogar Novamente</button>
+    </section>
+  </div>
+
+  <script>
+    const WORD_BANK = [
+      { word: "RECICLAGEM", category: "Gestão de Resíduos", info: "A reciclagem transforma materiais usados (como papel, plástico, vidro e metal) em novos produtos, reduzindo o lixo nos aterros e economizando recursos naturais." },
+      { word: "REUTILIZAÇÃO", category: "Consumo Consciente", info: "Reutilizar significa dar um novo uso a objetos e embalagens antes de descartá-los, diminuindo a produção de lixo e o consumo de matéria-prima." },
+      { word: "DESMATAMENTO", category: "Impacto Ambiental", info: "O desmatamento destrói habitats naturais, ameaça milhares de espécies de animais e plantas, empobrece o solo e agrava as mudanças climáticas." },
+      { word: "COMPOSTAGEM", category: "Resíduos Orgânicos", info: "A compostagem transforma restos de frutas, legumes e folhas em adubo natural rico em nutrientes, reduzindo a emissão de gases nos aterros sanitários." },
+      { word: "BIODIVERSIDADE", category: "Natureza Viva", info: "Biodiversidade é a variedade de formas de vida na Terra. Quanto maior a biodiversidade, mais equilibrados e resistentes são os ecossistemas." },
+      { word: "ECONOMIA DE ÁGUA", category: "Recursos Hídricos", info: "Evitar desperdícios no banho, na torneira e na limpeza preserva os rios e reservatórios, garantindo água potável para todos." },
+      { word: "ENERGIA SOLAR", category: "Energia Limpa", info: "A energia solar converte a luz do sol em eletricidade limpa e renovável, sem emitir gases poluentes na atmosfera." },
+      { word: "POLUIÇÃO", category: "Impacto Ambiental", info: "A poluição contamina o ar, a água e o solo com resíduos tóxicos e plásticos, prejudicando a saúde humana e toda a vida silvestre." },
+      { word: "REFLORESTAMENTO", category: "Recuperação Ambiental", info: "O reflorestamento consiste em plantar árvores nativas em áreas degradadas para recuperar nascentes, proteger o solo e absorver gás carbônico." },
+      { word: "ENERGIA EÓLICA", category: "Energia Limpa", info: "A energia eólica utiliza a força dos ventos para gerar eletricidade de forma renovável e com baixíssimo impacto ambiental." },
+      { word: "COLETA SELETIVA", category: "Gestão de Resíduos", info: "Separar o lixo seco (reciclável) do lixo orgânico facilita o trabalho das cooperativas e evita que materiais reaproveitáveis acabem em lixões." },
+      { word: "EFEITO ESTUFA", category: "Clima", info: "Embora seja um fenômeno natural que mantém a Terra aquecida, o excesso de gases poluentes intensifica o efeito estufa e causa o aquecimento global." },
+      { word: "SUSTENTABILIDADE", category: "Equilíbrio Global", info: "Sustentabilidade é suprir as necessidades do presente sem comprometer a capacidade das futuras gerações de atenderem às suas próprias necessidades." },
+      { word: "ECOSSISTEMA", category: "Natureza Viva", info: "Um ecossistema é formado pelo conjunto de seres vivos e o ambiente físico onde interagem, como florestas, rios, manguezais e oceanos." },
+      { word: "PRESERVAÇÃO", category: "Proteção Ambiental", info: "Preservar significa proteger áreas naturais intactas contra a exploração humana, mantendo santuários ecológicos para a fauna e a flora." },
+      { word: "ENERGIA LIMPA", category: "Transição Energética", info: "Energias limpas são fontes que não liberam poluentes atmosféricos durante a geração, como a solar, a eólica e a maremotriz." },
+      { word: "BIODEGRADÁVEL", category: "Materiais Ecológicos", info: "Produtos biodegradáveis se decompõem rapidamente pela ação de microrganismos naturais, sem deixar resíduos tóxicos no meio ambiente." },
+      { word: "PEGADA ECOLÓGICA", category: "Consumo Consciente", info: "A pegada ecológica mede a quantidade de recursos naturais necessários para sustentar o estilo de vida de uma pessoa ou sociedade." },
+      { word: "CONSERVAÇÃO", category: "Uso Racional", info: "Conservar envolve usar os recursos naturais de maneira planejada e responsável para evitar seu esgotamento." },
+      { word: "MICROPLÁSTICO", category: "Poluição Marinha", info: "Microplásticos são partículas minúsculas de plástico que poluem oceanos e rios, sendo ingeridas por peixes e entrando na cadeia alimentar." },
+      { word: "AGROECOLOGIA", category: "Produção Sustentável", info: "A agroecologia produz alimentos saudáveis respeitando os ciclos da natureza, sem o uso de agrotóxicos que contaminam o solo e a água." },
+      { word: "SANEAMENTO", category: "Saúde e Ambiente", info: "O saneamento básico trata a água e o esgoto antes que voltem aos rios, prevenindo doenças e protegendo os ecossistemas aquáticos." },
+      { word: "AQUÍFERO", category: "Recursos Hídricos", info: "Aquíferos são grandes reservas subterrâneas de água doce que abastecem poços, nascentes e rios durante períodos de seca." },
+      { word: "MANGUEZAL", category: "Ecossistema Costeiro", info: "Os manguezais funcionam como berçários naturais para diversas espécies marinhas e protegem a costa contra a erosão." },
+      { word: "DESPERDÍCIO", category: "Consumo Consciente", info: "Reduzir o desperdício de alimentos e energia evita a extração desnecessária de recursos e diminui a geração de lixo." },
+      { word: "CAMADA DE OZÔNIO", category: "Atmosfera", info: "A camada de ozônio filtra grande parte da radiação ultravioleta do sol, protegendo os seres vivos contra danos graves." },
+      { word: "ENERGIA RENOVÁVEL", category: "Energia Limpa", info: "Fontes renováveis se regeneram naturalmente em curto prazo, como o sol, os ventos, a água e a biomassa." },
+      { word: "FAUNA E FLORA", category: "Biodiversidade", info: "Fauna representa o conjunto de animais e flora o conjunto de plantas de uma região; ambos dependem um do outro para sobreviver." },
+      { word: "POLUIÇÃO SONORA", category: "Qualidade de Vida", info: "O excesso de ruídos nas cidades afeta a saúde humana e desorienta aves e outros animais urbanos." },
+      { word: "CONSUMO CONSCIENTE", category: "Hábitos Diários", info: "Praticar o consumo consciente é refletir antes de comprar, priorizando produtos duráveis, locais e com menor impacto ambiental." }
+    ];
+
+    const TOTAL_ROUNDS = 10;
+    const MAX_LEAVES = 6;
+    const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+    let gameWords = [];
+    let currentRound = 0;
+    let score = 0;
+    let preservedTrees = 0;
+    let remainingLeaves = MAX_LEAVES;
+    let guessedLetters = new Set();
+    let roundActive = false;
+
+    const roundDisplay = document.getElementById("round-display");
+    const treesDisplay = document.getElementById("trees-display");
+    const scoreDisplay = document.getElementById("score-display");
+    const leavesCount = document.getElementById("leaves-count");
+    const categoryDisplay = document.getElementById("category-display");
+    const wordSlots = document.getElementById("word-slots");
+    const keyboard = document.getElementById("keyboard");
+    const eduCard = document.getElementById("edu-card");
+    const eduHeader = document.getElementById("edu-header");
+    const eduText = document.getElementById("edu-text");
+    const nextBtn = document.getElementById("next-btn");
+    const restartBtn = document.getElementById("restart-btn");
+    const gameArea = document.getElementById("game-area");
+    const endScreen = document.getElementById("end-screen");
+    const treeBox = document.getElementById("tree-box");
+
+    function normalizeChar(char) {
+      return char.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+
+    function shuffle(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function startGame() {
+      gameWords = shuffle(WORD_BANK).slice(0, TOTAL_ROUNDS);
+      currentRound = 0;
+      score = 0;
+      preservedTrees = 0;
+      endScreen.classList.remove("active");
+      gameArea.style.display = "block";
+      updateHeader();
+      loadRound();
+    }
+
+    function updateHeader() {
+      roundDisplay.textContent = `${Math.min(currentRound + 1, TOTAL_ROUNDS)}/${TOTAL_ROUNDS}`;
+      treesDisplay.textContent = preservedTrees;
+      scoreDisplay.textContent = score;
+    }
+
+    function resetTree() {
+      remainingLeaves = MAX_LEAVES;
+      leavesCount.textContent = remainingLeaves;
+      treeBox.classList.remove("tree-saved");
+      for (let i = 1; i <= MAX_LEAVES; i++) {
+        const leaf = document.getElementById(`leaf-${i}`);
+        if (leaf) leaf.classList.remove("fallen");
+      }
+    }
+
+    function loadRound() {
+      roundActive = true;
+      guessedLetters.clear();
+      resetTree();
+      updateHeader();
+
+      eduCard.className = "edu-card";
+      eduCard.style.display = "none";
+
+      const currentObj = gameWords[currentRound];
+      categoryDisplay.textContent = `🌿 Tema: ${currentObj.category}`;
+
+      renderWord(false);
+      renderKeyboard();
+    }
+
+    function renderWord(revealAll = false) {
+      const targetWord = gameWords[currentRound].word;
+      wordSlots.innerHTML = "";
+
+      const words = targetWord.split(" ");
+      words.forEach(w => {
+        const group = document.createElement("div");
+        group.className = "word-group";
+
+        for (const char of w) {
+          const slot = document.createElement("div");
+          slot.className = "letter-slot";
+          const baseChar = normalizeChar(char);
+
+          if (guessedLetters.has(baseChar)) {
+            slot.textContent = char;
+            slot.classList.add("revealed");
+          } else if (revealAll) {
+            slot.textContent = char;
+            slot.classList.add("missed");
+          } else {
+            slot.textContent = "";
+          }
+          group.appendChild(slot);
+        }
+        wordSlots.appendChild(group);
+      });
+    }
+
+    function renderKeyboard() {
+      keyboard.innerHTML = "";
+      ALPHABET.forEach(letter => {
+        const btn = document.createElement("button");
+        btn.className = "key-btn";
+        btn.textContent = letter;
+        btn.dataset.letter = letter;
+        btn.addEventListener("click", () => handleGuess(letter, btn));
+        keyboard.appendChild(btn);
+      });
+    }
+
+    function handleGuess(letter, btnElement) {
+      if (!roundActive || guessedLetters.has(letter)) return;
+      guessedLetters.add(letter);
+
+      const targetWord = gameWords[currentRound].word;
+      const normalizedTarget = normalizeChar(targetWord);
+
+      if (normalizedTarget.includes(letter)) {
+        btnElement.classList.add("correct");
+        btnElement.disabled = true;
+        renderWord(false);
+        checkWin();
+      } else {
+        btnElement.classList.add("wrong");
+        btnElement.disabled = true;
+        removeLeaf();
+      }
+    }
+
+    function removeLeaf() {
+      const leafIndex = MAX_LEAVES - remainingLeaves + 1;
+      const leaf = document.getElementById(`leaf-${leafIndex}`);
+      if (leaf) leaf.classList.add("fallen");
+
+      remainingLeaves--;
+      leavesCount.textContent = Math.max(remainingLeaves, 0);
+
+      if (remainingLeaves <= 0) {
+        finishRound(false);
+      }
+    }
+
+    function checkWin() {
+      const targetWord = gameWords[currentRound].word;
+      const normalizedTarget = normalizeChar(targetWord).replace(/\s+/g, "");
+      const allFound = [...normalizedTarget].every(ch => guessedLetters.has(ch));
+
+      if (allFound) {
+        finishRound(true);
+      }
+    }
+
+    function finishRound(won) {
+      roundActive = false;
+      document.querySelectorAll(".key-btn").forEach(btn => (btn.disabled = true));
+
+      const currentObj = gameWords[currentRound];
+
+      if (won) {
+        preservedTrees++;
+        score += 100 + remainingLeaves * 15;
+        treeBox.classList.add("tree-saved");
+        eduCard.className = "edu-card win";
+        eduHeader.innerHTML = `🌳 Árvore Preservada! Palavra: <u>${currentObj.word}</u>`;
+      } else {
+        renderWord(true);
+        eduCard.className = "edu-card lose";
+        eduHeader.innerHTML = `🍂 A árvore perdeu todas as folhas! A palavra era: <u>${currentObj.word}</u>`;
+      }
+
+      updateHeader();
+      eduText.textContent = currentObj.info;
+      eduCard.style.display = "block";
+      nextBtn.textContent = currentRound + 1 < TOTAL_ROUNDS ? "Próxima Palavra ➡️" : "Ver Resultado Final 🏆";
+    }
+
+    nextBtn.addEventListener("click", () => {
+      currentRound++;
+      if (currentRound < TOTAL_ROUNDS) {
+        loadRound();
+      } else {
+        showEndScreen();
+      }
+    });
+
+    restartBtn.addEventListener("click", startGame);
+
+    document.addEventListener("keydown", e => {
+      if (!roundActive) return;
+      const key = normalizeChar(e.key.toUpperCase());
+      if (ALPHABET.includes(key)) {
+        const btn = document.querySelector(`.key-btn[data-letter="${key}"]`);
+        if (btn && !btn.disabled) handleGuess(key, btn);
+      }
+    });
+
+    function showEndScreen() {
+      gameArea.style.display = "none";
+      endScreen.classList.add("active");
+      document.getElementById("final-score").textContent = score;
+      document.getElementById("final-trees").textContent = `${preservedTrees}/${TOTAL_ROUNDS}`;
+      document.getElementById("final-words").textContent = `${preservedTrees}/${TOTAL_ROUNDS}`;
+    }
+
+    startGame();
+  </script>
+</body>
+</html>
